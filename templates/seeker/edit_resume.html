@@ -1,0 +1,19 @@
+{% extends "dash_base.html" %}
+{% block title %}Resume{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900">My Resume</h1>
+<p class="text-sm text-slate-500">Employers can view your resume when you apply to their jobs.</p>
+<div class="card p-6 mt-5">
+  {% if seeker.resume_path %}
+  <div class="flex items-center gap-4 rounded-xl border border-slate-200 p-4"><i class="fa-solid fa-file-pdf text-3xl text-red-500"></i>
+    <div class="flex-1 min-w-0"><p class="font-semibold truncate">{{ seeker.full_name|replace(' ', '_') }}_Resume.pdf</p><p class="text-xs text-slate-400">Current resume</p></div>
+    <div class="flex gap-2"><a class="btn btn-outline btn-sm" target="_blank" href="/resumes/{{ seeker.id }}">View</a><a class="btn btn-outline btn-sm" href="/resumes/{{ seeker.id }}?download=1">Download</a></div></div>
+  {% else %}<p class="text-sm text-slate-500">You haven't uploaded a resume yet.</p>{% endif %}
+  <form method="post" action="/seeker/resume" enctype="multipart/form-data" class="mt-6 space-y-4">
+    {{ csrf_input(request) }}
+    <div><label class="label" for="resume">{{ 'Replace resume' if seeker.resume_path else 'Upload resume' }} (PDF only, max 5 MB)</label>
+      <input class="input" type="file" id="resume" name="resume" accept="application/pdf,.pdf" required data-max-mb="5"></div>
+    <div class="flex gap-3"><button class="btn btn-primary" type="submit" data-loading="Uploading..."><i class="fa-solid fa-upload"></i> {{ 'Replace Resume' if seeker.resume_path else 'Upload Resume' }}</button><a class="btn btn-outline" href="/seeker/profile">Cancel</a></div>
+  </form>
+</div>
+{% endblock %}

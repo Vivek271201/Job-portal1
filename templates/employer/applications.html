@@ -1,0 +1,27 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import status_badge, empty_state, avatar, pagination %}
+{% block title %}Applications{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900">Applications</h1>
+<p class="text-sm text-slate-500">{{ page.total }} application{{ '' if page.total == 1 else 's' }}</p>
+<form method="get" class="card p-4 mt-5 grid gap-3 sm:grid-cols-3">
+  <select class="input" name="job_id" aria-label="Filter by job"><option value="">All jobs</option>{% for j in jobs %}<option value="{{ j.id }}" {{ 'selected' if f.job_id == j.id|string }}>{{ j.title }}</option>{% endfor %}</select>
+  <select class="input" name="status" aria-label="Filter by status"><option value="">All statuses</option>{% for s in statuses %}<option {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}</select>
+  <div class="flex gap-2"><button class="btn btn-primary flex-1" type="submit">Filter</button><a class="btn btn-outline" href="/employer/applications">Reset</a></div>
+</form>
+<div class="mt-5">
+{% if page['items'] %}<div class="card table-wrap"><table class="tbl"><thead><tr><th>Applicant</th><th>Profile</th><th>Job</th><th>Applied</th><th>Resume</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for a in page['items'] %}<tr>
+  <td><div class="flex items-center gap-2">{{ avatar(a.seeker, "h-9 w-9", "text-xs") }}<div><p class="font-medium">{{ a.seeker.full_name }}</p><p class="text-xs text-slate-400">{{ a.seeker.headline or '' }}</p></div></div></td>
+  <td><a class="btn btn-outline btn-sm" href="/seekers/{{ a.seeker.id }}">View</a></td>
+  <td>{{ a.job.title }}</td><td class="whitespace-nowrap">{{ a.applied_at|date_fmt }}</td>
+  <td>{% if a.resume_path %}<div class="flex gap-1"><a class="btn btn-outline btn-sm" target="_blank" href="/applications/{{ a.id }}/resume" title="View"><i class="fa-solid fa-eye"></i></a><a class="btn btn-outline btn-sm" href="/applications/{{ a.id }}/resume?download=1" title="Download"><i class="fa-solid fa-download"></i></a></div>{% else %}<span class="text-slate-400">—</span>{% endif %}</td>
+  <td>{{ status_badge(a.status) }}</td>
+  <td><form method="post" action="/employer/applications/{{ a.id }}/status" class="flex gap-1">{{ csrf_input(request) }}
+    <input type="hidden" name="back" value="{{ current_url(request) }}">
+    <select class="input !py-1 !text-xs !w-auto" name="status" aria-label="Change status">{% for s in statuses %}<option {{ 'selected' if a.status == s }}>{{ s }}</option>{% endfor %}</select>
+    <button class="btn btn-primary btn-sm" type="submit">Update</button></form></td>
+</tr>{% endfor %}</tbody></table></div>{{ pagination(page, request) }}
+{% else %}{{ empty_state('fa-users', 'No applications found', 'Applications to your jobs will appear here.') }}{% endif %}
+</div>
+{% endblock %}

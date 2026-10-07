@@ -1,0 +1,6 @@
+{% extends "dash_base.html" %}
+{% block title %}Edit Job{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900 mb-1">Edit Job</h1><p class="text-sm text-slate-500 mb-5">{{ job.title }}</p>
+{% with action="/employer/jobs/" ~ job.id ~ "/edit", button="Save Changes" %}{% include "employer/_job_form.html" %}{% endwith %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% from "components/macros.html" import errors_box %}
+{{ errors_box(errors) }}
+<form method="post" action="{{ action }}" class="card p-6 space-y-5">
+  {{ csrf_input(request) }}
+  <div><label class="label" for="title">Job title *</label><input class="input" id="title" name="title" value="{{ form.title }}" required maxlength="200" placeholder="e.g. Python Developer"></div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div><label class="label" for="location">Location *</label><input class="input" id="location" name="location" value="{{ form.location }}" required maxlength="150" placeholder="Pune, Maharashtra"></div>
+    <div><label class="label" for="employment_type">Employment type</label><select class="input" id="employment_type" name="employment_type">{% for t in types %}<option {{ 'selected' if form.employment_type == t }}>{{ t }}</option>{% endfor %}</select></div>
+    <div><label class="label" for="experience_required">Min. experience (years)</label><input class="input" id="experience_required" name="experience_required" type="number" min="0" max="40" value="{{ form.experience_required }}"></div>
+    <div><label class="label" for="salary_min">Min salary (LPA)</label><input class="input" id="salary_min" name="salary_min" type="number" step="0.1" min="0" value="{{ form.salary_min }}" placeholder="5"></div>
+    <div><label class="label" for="salary_max">Max salary (LPA)</label><input class="input" id="salary_max" name="salary_max" type="number" step="0.1" min="0" value="{{ form.salary_max }}" placeholder="8"></div>
+    <div><label class="label" for="deadline">Application deadline</label><input class="input" id="deadline" name="deadline" type="date" value="{{ form.deadline }}"></div>
+  </div>
+  <div><label class="label" for="description">Job description *</label><textarea class="input" id="description" name="description" rows="5" required maxlength="10000">{{ form.description }}</textarea></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div><label class="label" for="responsibilities">Responsibilities <span class="font-normal text-slate-400">(one per line)</span></label><textarea class="input" id="responsibilities" name="responsibilities" rows="5">{{ form.responsibilities }}</textarea></div>
+    <div><label class="label" for="requirements">Requirements <span class="font-normal text-slate-400">(one per line)</span></label><textarea class="input" id="requirements" name="requirements" rows="5">{{ form.requirements }}</textarea></div>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="sm:col-span-2"><label class="label" for="skills">Required skills <span class="font-normal text-slate-400">(comma separated)</span></label><input class="input" id="skills" name="skills" value="{{ form.skills }}" placeholder="Python, FastAPI, MySQL"></div>
+    <div><label class="label" for="status">Status</label><select class="input" id="status" name="status">{% for s in statuses %}<option value="{{ s }}" {{ 'selected' if form.status == s }}>{{ s|capitalize }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="flex gap-3"><button class="btn btn-primary" type="submit" data-loading="Saving..."><i class="fa-solid fa-floppy-disk"></i> {{ button }}</button><a class="btn btn-outline" href="/employer/jobs">Cancel</a></div>
+</form>

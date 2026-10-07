@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+  <h1 class="text-3xl font-extrabold text-slate-900">About JobPortal</h1>
+  <p class="mt-4 text-slate-600 leading-relaxed">JobPortal is a modern recruitment platform that connects job seekers with employers. Companies create professional profiles, post jobs and manage applicants. Job seekers build a profile, upload a resume and apply with a single click.</p>
+  <div class="grid gap-5 sm:grid-cols-3 mt-10">
+    <div class="card p-6"><i class="fa-solid fa-user-tie text-2xl text-indigo-500"></i><h3 class="font-semibold mt-3">For job seekers</h3><p class="text-sm text-slate-500 mt-1">Create a professional profile, search and filter jobs and track every application.</p></div>
+    <div class="card p-6"><i class="fa-solid fa-building text-2xl text-indigo-500"></i><h3 class="font-semibold mt-3">For employers</h3><p class="text-sm text-slate-500 mt-1">Showcase your company, post openings and move candidates through your hiring pipeline.</p></div>
+    <div class="card p-6"><i class="fa-solid fa-shield-halved text-2xl text-indigo-500"></i><h3 class="font-semibold mt-3">Safe &amp; private</h3><p class="text-sm text-slate-500 mt-1">Passwords are hashed and resumes are only visible to employers you apply to.</p></div>
+  </div>
+</div>
+{% endblock %}

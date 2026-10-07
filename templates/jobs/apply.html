@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import company_logo, errors_box %}
+{% block title %}Apply - {{ job.title }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-10">
+  <a href="/jobs/{{ job.id }}" class="text-sm text-slate-500 hover:text-indigo-600"><i class="fa-solid fa-arrow-left mr-1"></i> Back to job</a>
+  <div class="card p-6 sm:p-8 mt-4">
+    <div class="flex items-center gap-4 pb-5 border-b border-slate-100">{{ company_logo(job.company) }}
+      <div><h1 class="text-xl font-bold text-slate-900">Apply for {{ job.title }}</h1><p class="text-sm text-slate-500">{{ job.company.company_name }} · {{ job.location }}</p></div></div>
+    <div class="mt-5">{{ errors_box(errors) }}
+    <form method="post" action="/jobs/{{ job.id }}/apply" enctype="multipart/form-data" class="space-y-5">
+      {{ csrf_input(request) }}
+      <div><p class="label">Resume (PDF)</p>
+        {% if seeker.resume_path %}<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 flex items-center gap-2 mb-3">
+          <i class="fa-solid fa-file-pdf"></i><span class="flex-1">Your saved resume will be attached automatically.</span><a class="underline" href="/resumes/{{ seeker.id }}" target="_blank">Preview</a></div>
+        <label class="label text-slate-500 font-normal" for="resume">Or upload a different resume for this application</label>
+        {% else %}<div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 mb-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i>You have no saved resume. Please upload one below (you can also <a class="underline" href="/seeker/resume">save one to your profile</a>).</div>{% endif %}
+        <input class="input" type="file" id="resume" name="resume" accept="application/pdf,.pdf" data-max-mb="5" {{ 'required' if not seeker.resume_path }}>
+        <p class="text-xs text-slate-400 mt-1">PDF only, up to 5 MB.</p></div>
+      <div><label class="label" for="cover_letter">Cover letter <span class="font-normal text-slate-400">(optional)</span></label>
+        <textarea class="input" id="cover_letter" name="cover_letter" rows="7" maxlength="3000" placeholder="Tell the employer why you are a great fit...">{{ cover }}</textarea></div>
+      <div class="flex gap-3"><button class="btn btn-primary" type="submit" data-loading="Submitting..."><i class="fa-solid fa-paper-plane"></i> Submit Application</button><a href="/jobs/{{ job.id }}" class="btn btn-outline">Cancel</a></div>
+    </form></div>
+  </div>
+</div>
+{% endblock %}

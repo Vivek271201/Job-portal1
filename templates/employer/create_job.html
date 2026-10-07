@@ -1,0 +1,6 @@
+{% extends "dash_base.html" %}
+{% block title %}Post a Job{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900 mb-1">Post a Job</h1><p class="text-sm text-slate-500 mb-5">Fill in the details to publish a new opening.</p>
+{% with action="/employer/jobs/create", button="Post Job" %}{% include "employer/_job_form.html" %}{% endwith %}
+{% endblock %}

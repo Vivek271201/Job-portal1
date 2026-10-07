@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import job_card, empty_state, pagination %}
+{% block title %}Find Jobs{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <h1 class="text-3xl font-extrabold text-slate-900">Find Jobs</h1>
+  <p class="text-slate-500 mt-1">{{ page.total }} job{{ '' if page.total == 1 else 's' }} found</p>
+  <div class="mt-6 lg:grid lg:grid-cols-[18rem_1fr] lg:gap-8">
+    <form method="get" class="card p-5 h-fit space-y-4 mb-6 lg:mb-0 lg:sticky lg:top-24">
+      <div><label class="label" for="q">Title, skill or company</label><input class="input" id="q" name="q" value="{{ f.q }}" placeholder="e.g. Python"></div>
+      <div><label class="label" for="location">Location</label><input class="input" id="location" name="location" value="{{ f.location }}" placeholder="e.g. Pune"></div>
+      <div><label class="label" for="type">Employment type</label><select class="input" id="type" name="type"><option value="">Any</option>
+        {% for t in types %}<option {{ 'selected' if f.type == t }}>{{ t }}</option>{% endfor %}</select></div>
+      <div><label class="label" for="salary">Minimum salary</label><select class="input" id="salary" name="salary">
+        {% for v, l in [('', 'Any'), ('3', '₹3 LPA+'), ('5', '₹5 LPA+'), ('8', '₹8 LPA+'), ('12', '₹12 LPA+'), ('20', '₹20 LPA+')] %}<option value="{{ v }}" {{ 'selected' if f.salary == v }}>{{ l }}</option>{% endfor %}</select></div>
+      <div><label class="label" for="experience">Experience required</label><select class="input" id="experience" name="experience">
+        {% for v, l in [('', 'Any'), ('0', 'Fresher'), ('1', 'Up to 1 year'), ('3', 'Up to 3 years'), ('5', 'Up to 5 years')] %}<option value="{{ v }}" {{ 'selected' if f.experience == v }}>{{ l }}</option>{% endfor %}</select></div>
+      <div><label class="label" for="posted">Date posted</label><select class="input" id="posted" name="posted">
+        {% for v, l in [('', 'Any time'), ('1', 'Last 24 hours'), ('7', 'Last 7 days'), ('30', 'Last 30 days')] %}<option value="{{ v }}" {{ 'selected' if f.posted == v }}>{{ l }}</option>{% endfor %}</select></div>
+      <div class="flex gap-2"><button class="btn btn-primary flex-1" type="submit"><i class="fa-solid fa-filter"></i> Apply</button><a href="/jobs" class="btn btn-outline">Reset</a></div>
+    </form>
+    <div>
+      {% if page['items'] %}<div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{% for job in page['items'] %}{{ job_card(job) }}{% endfor %}</div>{{ pagination(page, request) }}
+      {% else %}{{ empty_state('fa-magnifying-glass', 'No jobs match your search', 'Try different keywords or remove some filters.', '/jobs', 'Clear all filters') }}{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

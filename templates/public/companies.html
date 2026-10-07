@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import company_card, empty_state, pagination %}
+{% block title %}Companies{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <h1 class="text-3xl font-extrabold text-slate-900">Explore Companies</h1>
+  <p class="text-slate-500 mt-1">{{ page.total }} compan{{ 'y' if page.total == 1 else 'ies' }} found</p>
+  <form method="get" class="card p-4 mt-6 grid gap-3 sm:grid-cols-4">
+    <input class="input" name="name" value="{{ f.name }}" placeholder="Company name" aria-label="Company name">
+    <select class="input" name="industry" aria-label="Industry"><option value="">All industries</option>
+      {% for i in industries %}<option value="{{ i }}" {{ 'selected' if i == f.industry }}>{{ i }}</option>{% endfor %}</select>
+    <input class="input" name="location" value="{{ f.location }}" placeholder="City or state" aria-label="Location">
+    <div class="flex gap-2"><button class="btn btn-primary flex-1" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button><a class="btn btn-outline" href="/companies">Reset</a></div>
+  </form>
+  <div class="mt-6">
+  {% if page['items'] %}<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{% for c in page['items'] %}{{ company_card(c) }}{% endfor %}</div>
+  {{ pagination(page, request) }}
+  {% else %}{{ empty_state('fa-building', 'No companies found', 'Try changing your search filters.', '/companies', 'Clear filters') }}{% endif %}
+  </div>
+</div>
+{% endblock %}

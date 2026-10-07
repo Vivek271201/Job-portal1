@@ -1,0 +1,19 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import status_badge, empty_state, company_logo %}
+{% block title %}My Applications{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900">My Applications</h1>
+<p class="text-sm text-slate-500">{{ applications|length }} application{{ '' if applications|length == 1 else 's' }}</p>
+<div class="mt-5">
+{% if applications %}
+<div class="card table-wrap"><table class="tbl"><thead><tr><th>Job</th><th>Company</th><th>Applied</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for a in applications %}<tr>
+  <td class="font-medium"><a class="hover:text-indigo-600" href="/jobs/{{ a.job.id }}">{{ a.job.title }}</a><p class="text-xs text-slate-400 font-normal">{{ a.job.location }}</p></td>
+  <td><div class="flex items-center gap-2">{{ company_logo(a.job.company, "h-8 w-8", "text-sm") }}<span>{{ a.job.company.company_name }}</span></div></td>
+  <td class="whitespace-nowrap">{{ a.applied_at|date_fmt }}</td><td>{{ status_badge(a.status) }}</td>
+  <td><div class="flex gap-2"><a class="btn btn-outline btn-sm" href="/jobs/{{ a.job.id }}">View</a>
+    {% if a.status == 'Applied' %}<form method="post" action="/seeker/applications/{{ a.id }}/withdraw" data-confirm="Withdraw this application?">{{ csrf_input(request) }}<button class="btn btn-danger btn-sm" type="submit">Withdraw</button></form>{% endif %}</div></td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty_state('fa-paper-plane', 'No applications yet', 'When you apply for jobs they will show up here with their status.', '/jobs', 'Find Jobs') }}{% endif %}
+</div>
+{% endblock %}

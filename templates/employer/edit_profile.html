@@ -1,0 +1,36 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import company_logo, errors_box %}
+{% block title %}Edit Company Profile{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900">Company Profile</h1>
+<p class="text-sm text-slate-500">This information is shown on your public company page.</p>
+<div class="mt-5">{{ errors_box(errors) }}</div>
+<form method="post" action="/employer/profile/edit" enctype="multipart/form-data" class="card p-6 space-y-5">
+  {{ csrf_input(request) }}
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="flex items-center gap-4">{{ company_logo(company, "h-20 w-20", "text-3xl") }}<img id="logo-preview" class="hidden h-20 w-20 rounded-xl object-cover" alt="New logo preview">
+      <div class="flex-1"><label class="label" for="logo">Company logo</label><input class="input" type="file" id="logo" name="logo" accept="image/png,image/jpeg" data-preview="logo-preview" data-max-mb="2"><p class="text-xs text-slate-400 mt-1">JPG or PNG, up to 2 MB.</p></div></div>
+    <div><label class="label" for="cover">Cover image</label><input class="input" type="file" id="cover" name="cover" accept="image/png,image/jpeg" data-max-mb="2"><p class="text-xs text-slate-400 mt-1">Wide image works best. JPG or PNG, up to 2 MB.</p></div>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div><label class="label" for="company_name">Company name *</label><input class="input" id="company_name" name="company_name" value="{{ form.company_name }}" required maxlength="200"></div>
+    <div><label class="label" for="industry">Industry</label><input class="input" id="industry" name="industry" value="{{ form.industry }}" placeholder="Information Technology"></div>
+    <div><label class="label" for="company_size">Company size</label><select class="input" id="company_size" name="company_size"><option value="">Select size</option>{% for s in sizes %}<option value="{{ s }}" {{ 'selected' if form.company_size == s }}>{{ s }} employees</option>{% endfor %}</select></div>
+    <div><label class="label" for="founded_year">Founded year</label><input class="input" id="founded_year" name="founded_year" type="number" min="1800" max="2100" value="{{ form.founded_year }}"></div>
+  </div>
+  <div><label class="label" for="description">About the company</label><textarea class="input" id="description" name="description" rows="5" maxlength="5000">{{ form.description }}</textarea></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div><label class="label" for="website">Website</label><input class="input" id="website" name="website" value="{{ form.website }}" placeholder="https://example.com"></div>
+    <div><label class="label" for="linkedin_url">LinkedIn page</label><input class="input" id="linkedin_url" name="linkedin_url" value="{{ form.linkedin_url }}" placeholder="https://linkedin.com/company/..."></div>
+    <div><label class="label" for="email">Contact email</label><input class="input" id="email" name="email" type="email" value="{{ form.email }}"></div>
+    <div><label class="label" for="phone">Phone</label><input class="input" id="phone" name="phone" value="{{ form.phone }}"></div>
+  </div>
+  <div><label class="label" for="address">Address</label><input class="input" id="address" name="address" value="{{ form.address }}"></div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div><label class="label" for="city">City</label><input class="input" id="city" name="city" value="{{ form.city }}"></div>
+    <div><label class="label" for="state">State</label><input class="input" id="state" name="state" value="{{ form.state }}"></div>
+    <div><label class="label" for="country">Country</label><input class="input" id="country" name="country" value="{{ form.country }}" placeholder="India"></div>
+  </div>
+  <div class="flex gap-3"><button class="btn btn-primary" type="submit" data-loading="Saving..."><i class="fa-solid fa-floppy-disk"></i> Save Company Profile</button><a class="btn btn-outline" href="/employer/profile">Cancel</a></div>
+</form>
+{% endblock %}

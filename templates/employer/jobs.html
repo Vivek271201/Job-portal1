@@ -1,0 +1,21 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import status_badge, empty_state %}
+{% block title %}My Jobs{% endblock %}
+{% block dash %}
+<div class="flex items-center justify-between gap-3"><div><h1 class="text-2xl font-extrabold text-slate-900">My Jobs</h1><p class="text-sm text-slate-500">{{ jobs|length }} job{{ '' if jobs|length == 1 else 's' }} posted</p></div>
+  <a href="/employer/jobs/create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Post a Job</a></div>
+<div class="mt-5">
+{% if jobs %}<div class="card table-wrap"><table class="tbl"><thead><tr><th>Job</th><th>Type</th><th>Applications</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+{% for j in jobs %}<tr>
+  <td class="font-medium"><a class="hover:text-indigo-600" href="/jobs/{{ j.id }}">{{ j.title }}</a><p class="text-xs text-slate-400 font-normal">{{ j.location }}</p></td>
+  <td class="whitespace-nowrap">{{ j.employment_type }}</td>
+  <td><a class="text-indigo-600 font-medium" href="/employer/applications?job_id={{ j.id }}">{{ j.applications|length }}</a></td>
+  <td>{{ status_badge(j.status) }}</td><td class="whitespace-nowrap">{{ j.created_at|date_fmt }}</td>
+  <td><div class="flex flex-wrap gap-2"><a class="btn btn-outline btn-sm" href="/employer/jobs/{{ j.id }}/edit">Edit</a>
+    {% if j.status != 'closed' %}<form method="post" action="/employer/jobs/{{ j.id }}/status" data-confirm="Close this job? Candidates will no longer be able to apply.">{{ csrf_input(request) }}<input type="hidden" name="status" value="closed"><button class="btn btn-outline btn-sm" type="submit">Close</button></form>
+    {% else %}<form method="post" action="/employer/jobs/{{ j.id }}/status">{{ csrf_input(request) }}<input type="hidden" name="status" value="active"><button class="btn btn-outline btn-sm" type="submit">Reopen</button></form>{% endif %}
+    <form method="post" action="/employer/jobs/{{ j.id }}/delete" data-confirm="Permanently delete this job and all its applications?">{{ csrf_input(request) }}<button class="btn btn-danger btn-sm" type="submit">Delete</button></form></div></td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty_state('fa-briefcase', 'No jobs yet', 'Post your first job to start hiring.', '/employer/jobs/create', 'Post a Job') }}{% endif %}
+</div>
+{% endblock %}

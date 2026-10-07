@@ -1,0 +1,91 @@
+{% extends "base.html" %} {% from "components/macros.html" import company_logo, empty_state %} {% block title %}{{ company.company_name }}{% endblock %} {% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+    <div class="card overflow-hidden">
+        <div class="h-40 sm:h-56 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 relative">
+            {% if company.cover_url %}<img src="{{ company.cover_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">{% endif %}
+        </div>
+        <!-- FIX 1: added "relative z-10" -->
+        <div class="relative z-10 px-5 sm:px-8 pb-6">
+            <!-- FIX 2: sm:items-end changed to sm:items-start -->
+            <div class="-mt-12 sm:-mt-14 flex flex-col sm:flex-row sm:items-start gap-4">
+                <div class="rounded-2xl bg-white p-1.5 shadow-lg w-fit">{{ company_logo(company, "h-24 w-24 sm:h-28 sm:w-28", "text-4xl") }}</div>
+                <!-- FIX 3: sm:pb-1 changed to sm:pt-16 -->
+                <div class="flex-1 min-w-0 sm:pt-16">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ company.company_name }}</h1>
+                    <p class="text-slate-600">{{ company.industry or 'Company' }}</p>
+                    <p class="text-sm text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1 text-indigo-500"></i>{{ company.location_text or 'Location not specified' }}</p>
+                </div>
+                <!-- FIX 4: added sm:pt-16 -->
+                <div class="flex flex-wrap gap-2 sm:pt-16">
+                    {% if company.website %}<a class="btn btn-primary" href="{{ company.website }}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Visit Website</a>{% endif %}
+                    <a class="btn btn-outline" href="#jobs"><i class="fa-solid fa-briefcase"></i> View Jobs ({{ jobs|length }})</a> {% if is_owner %}<a class="btn btn-outline" href="/employer/profile/edit"><i class="fa-solid fa-pen"></i> Edit Profile</a>{%
+                    endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-6 mt-6 lg:grid-cols-3">
+        <div class="lg:col-span-2 space-y-6">
+            <section class="card p-6">
+                <h2 class="font-bold text-lg text-slate-900">About Company</h2>
+                <p class="mt-3 text-slate-600 whitespace-pre-line leading-relaxed">{{ company.description or 'This company has not added a description yet.' }}</p>
+            </section>
+            <section id="jobs" class="card p-6">
+                <h2 class="font-bold text-lg text-slate-900">Open Positions <span class="text-slate-400 font-normal">({{ jobs|length }})</span></h2>
+                {% if jobs %}
+                <div class="mt-4 space-y-3">
+                    {% for job in jobs %}
+                    <div class="border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:border-indigo-300 transition">
+                        <div class="flex-1 min-w-0">
+                            <a href="/jobs/{{ job.id }}" class="font-semibold text-slate-900 hover:text-indigo-600">{{ job.title }}</a>
+                            <p class="text-sm text-slate-500 mt-1"><i class="fa-solid fa-location-dot mr-1"></i>{{ job.location }} · {{ job.employment_type }} · {{ job.experience_text }}</p>
+                            <p class="text-sm text-slate-500"><i class="fa-solid fa-indian-rupee-sign mr-1"></i>{{ job.salary_text }} · Posted {{ job.created_at|timeago }}</p>
+                        </div>
+                        <a href="/jobs/{{ job.id }}" class="btn btn-outline btn-sm">View Job</a>
+                    </div>{% endfor %}</div>
+                {% else %}
+                <p class="mt-3 text-sm text-slate-500">No open positions right now.</p>{% endif %}
+            </section>
+        </div>
+        <aside class="space-y-6">
+            <section class="card p-6">
+                <h2 class="font-bold text-lg text-slate-900">Company Information</h2>
+                <dl class="mt-3 space-y-3 text-sm">
+                    <div><dt class="text-slate-400">Industry</dt>
+                        <dd class="font-medium">{{ company.industry or '—' }}</dd>
+                    </div>
+                    <div><dt class="text-slate-400">Company Size</dt>
+                        <dd class="font-medium">{{ (company.company_size ~ ' Employees') if company.company_size else '—' }}</dd>
+                    </div>
+                    <div><dt class="text-slate-400">Founded</dt>
+                        <dd class="font-medium">{{ company.founded_year or '—' }}</dd>
+                    </div>
+                    <div><dt class="text-slate-400">Location</dt>
+                        <dd class="font-medium">{{ company.location_text or '—' }}{% if company.country %}, {{ company.country }}{% endif %}</dd>
+                    </div>
+                    <div><dt class="text-slate-400">Website</dt>
+                        <dd class="font-medium break-all">{% if company.website %}<a class="text-indigo-600 hover:underline" href="{{ company.website }}" target="_blank" rel="noopener noreferrer">{{ company.website }}</a>{% else %}—{% endif %}</dd>
+                    </div>
+                </dl>
+            </section>
+            <section class="card p-6">
+                <h2 class="font-bold text-lg text-slate-900">Contact</h2>
+                <ul class="mt-3 space-y-3 text-sm text-slate-600">
+                    <li><i class="fa-solid fa-envelope w-5 text-indigo-500"></i>{% if company.email %}<a class="hover:text-indigo-600 break-all" href="mailto:{{ company.email }}">{{ company.email }}</a>{% else %}—{% endif %}</li>
+                    <li><i class="fa-solid fa-phone w-5 text-indigo-500"></i>{{ company.phone or '—' }}</li>
+                    <li><i class="fa-solid fa-map-pin w-5 text-indigo-500"></i>{{ company.address or '—' }}</li>
+                </ul>
+            </section>
+            {% if company.linkedin_url or company.website %}
+            <section class="card p-6">
+                <h2 class="font-bold text-lg text-slate-900">Social Links</h2>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    {% if company.linkedin_url %}<a class="btn btn-outline btn-sm" href="{{ company.linkedin_url }}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin text-sky-700"></i> LinkedIn</a>{% endif %} {% if company.website
+                    %}<a class="btn btn-outline btn-sm" href="{{ company.website }}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Website</a>{% endif %}
+                </div>
+            </section>{% endif %}
+        </aside>
+    </div>
+</div>
+{% endblock %}

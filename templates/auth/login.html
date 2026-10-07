@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import errors_box %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+  <div class="card p-8 shadow-lg">
+    <div class="text-center mb-6"><div class="mx-auto h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg"><i class="fa-solid fa-lock"></i></div>
+      <h1 class="mt-4 text-2xl font-extrabold text-slate-900">Welcome back</h1><p class="text-sm text-slate-500">Log in to continue to your dashboard</p></div>
+    {{ errors_box(errors) }}
+    <form method="post" action="/login" class="space-y-4" novalidate>
+      {{ csrf_input(request) }}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div><label class="label" for="email">Email</label><input class="input" id="email" name="email" type="email" value="{{ form.email or '' }}" required autocomplete="email" placeholder="you@example.com"></div>
+      <div><label class="label" for="password">Password</label>
+        <div class="relative"><input class="input pr-10" id="password" name="password" type="password" required autocomplete="current-password" placeholder="Your password">
+          <button type="button" data-toggle-password="password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" aria-label="Show or hide password"><i class="fa-regular fa-eye"></i></button></div></div>
+      <label class="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" name="remember" value="1" class="rounded"> Remember me for 30 days</label>
+      <button class="btn btn-primary w-full" type="submit" data-loading="Logging in...">Login</button>
+    </form>
+    <p class="text-center text-sm text-slate-500 mt-6">New here? <a href="/register" class="text-indigo-600 font-semibold hover:underline">Create an account</a></p>
+  </div>
+</div>
+{% endblock %}

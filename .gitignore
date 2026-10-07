@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+uploads/profile_images/*
+uploads/company_logos/*
+uploads/company_covers/*
+!uploads/*/.gitkeep
+.vscode/
+.idea/

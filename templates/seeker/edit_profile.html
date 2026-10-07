@@ -1,0 +1,66 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import avatar, errors_box %}
+{% block title %}Edit Profile{% endblock %}
+{% block dash %}
+<h1 class="text-2xl font-extrabold text-slate-900">Edit Profile</h1>
+<p class="text-sm text-slate-500">Profile completion: <strong>{{ completion.percent }}%</strong>{% if completion.suggestions %} · {{ completion.suggestions[0] }}{% endif %}</p>
+<div class="mt-5">{{ errors_box(errors) }}</div>
+
+<form method="post" action="/seeker/profile/edit" enctype="multipart/form-data" class="card p-6 space-y-5">
+  {{ csrf_input(request) }}
+  <div class="flex items-center gap-4">
+    <div id="photo-wrap">{{ avatar(seeker, "h-20 w-20", "text-2xl") }}</div>
+    <img id="photo-preview" class="hidden h-20 w-20 rounded-full object-cover" alt="New photo preview">
+    <div class="flex-1"><label class="label" for="photo">Profile picture</label>
+      <input class="input" type="file" id="photo" name="photo" accept="image/png,image/jpeg" data-preview="photo-preview" data-max-mb="2">
+      <p class="text-xs text-slate-400 mt-1">JPG or PNG, up to 2 MB.</p>
+      {% if seeker.profile_image %}<label class="text-xs text-slate-500 flex items-center gap-1 mt-1"><input type="checkbox" name="remove_photo" value="1"> Remove current photo</label>{% endif %}</div>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div><label class="label" for="full_name">Full name *</label><input class="input" id="full_name" name="full_name" value="{{ form.full_name }}" required maxlength="150"></div>
+    <div><label class="label" for="headline">Professional headline</label><input class="input" id="headline" name="headline" value="{{ form.headline }}" maxlength="200" placeholder="e.g. Full Stack Developer"></div>
+    <div><label class="label" for="phone">Phone</label><input class="input" id="phone" name="phone" value="{{ form.phone }}" placeholder="+91 98765 43210"></div>
+    <div><label class="label" for="location">Location</label><input class="input" id="location" name="location" value="{{ form.location }}" placeholder="Kolhapur, Maharashtra"></div>
+  </div>
+  <div><label class="label" for="about">About / summary</label><textarea class="input" id="about" name="about" rows="5" maxlength="5000" placeholder="Write a short professional summary...">{{ form.about }}</textarea></div>
+  <div><label class="label" for="skills">Skills <span class="font-normal text-slate-400">(comma separated)</span></label><input class="input" id="skills" name="skills" value="{{ form.skills }}" placeholder="Python, FastAPI, MySQL, HTML, CSS"></div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div><label class="label" for="linkedin_url">LinkedIn URL</label><input class="input" id="linkedin_url" name="linkedin_url" value="{{ form.linkedin_url }}" placeholder="https://linkedin.com/in/..."></div>
+    <div><label class="label" for="github_url">GitHub URL</label><input class="input" id="github_url" name="github_url" value="{{ form.github_url }}" placeholder="https://github.com/..."></div>
+    <div><label class="label" for="portfolio_url">Portfolio URL</label><input class="input" id="portfolio_url" name="portfolio_url" value="{{ form.portfolio_url }}" placeholder="https://..."></div>
+  </div>
+  <div class="flex gap-3"><button class="btn btn-primary" type="submit" data-loading="Saving..."><i class="fa-solid fa-floppy-disk"></i> Save Profile</button><a class="btn btn-outline" href="/seeker/profile">Cancel</a></div>
+</form>
+
+<section id="education" class="card p-6 mt-6"><h2 class="font-bold text-lg">Education</h2>
+  {% for e in seeker.education %}<div class="mt-3 flex items-start justify-between gap-3 border border-slate-200 rounded-xl p-3">
+    <div><p class="font-medium">{{ e.degree }}{% if e.field_of_study %} · {{ e.field_of_study }}{% endif %}</p><p class="text-sm text-slate-500">{{ e.institution }} · {{ e.start_year or '' }}–{{ e.end_year or '' }}</p></div>
+    <form method="post" action="/seeker/education/{{ e.id }}/delete" data-confirm="Remove this education entry?">{{ csrf_input(request) }}<button class="btn btn-danger btn-sm" type="submit" aria-label="Delete education"><i class="fa-solid fa-trash"></i></button></form></div>
+  {% else %}<p class="mt-2 text-sm text-slate-500">No education added yet.</p>{% endfor %}
+  <form method="post" action="/seeker/education/add" class="mt-5 grid gap-3 sm:grid-cols-2 border-t border-slate-100 pt-5">
+    {{ csrf_input(request) }}
+    <p class="sm:col-span-2 font-semibold text-sm">Add education</p>
+    <input class="input" name="institution" placeholder="College / institution *" required maxlength="200">
+    <input class="input" name="degree" placeholder="Degree * (e.g. BCA)" required maxlength="150">
+    <input class="input" name="field_of_study" placeholder="Field of study" maxlength="150">
+    <div class="grid grid-cols-2 gap-3"><input class="input" name="start_year" type="number" min="1950" max="2100" placeholder="Start year"><input class="input" name="end_year" type="number" min="1950" max="2100" placeholder="End year"></div>
+    <textarea class="input sm:col-span-2" name="description" rows="2" placeholder="Description (optional)"></textarea>
+    <div class="sm:col-span-2"><button class="btn btn-outline" type="submit"><i class="fa-solid fa-plus"></i> Add Education</button></div>
+  </form></section>
+
+<section id="experience" class="card p-6 mt-6"><h2 class="font-bold text-lg">Experience</h2>
+  {% for e in seeker.experience %}<div class="mt-3 flex items-start justify-between gap-3 border border-slate-200 rounded-xl p-3">
+    <div><p class="font-medium">{{ e.job_title }}</p><p class="text-sm text-slate-500">{{ e.company_name }} · {{ e.start_date|month_year }} – {{ e.end_date|month_year if e.end_date else 'Present' }}</p></div>
+    <form method="post" action="/seeker/experience/{{ e.id }}/delete" data-confirm="Remove this experience entry?">{{ csrf_input(request) }}<button class="btn btn-danger btn-sm" type="submit" aria-label="Delete experience"><i class="fa-solid fa-trash"></i></button></form></div>
+  {% else %}<p class="mt-2 text-sm text-slate-500">No experience added yet.</p>{% endfor %}
+  <form method="post" action="/seeker/experience/add" class="mt-5 grid gap-3 sm:grid-cols-2 border-t border-slate-100 pt-5">
+    {{ csrf_input(request) }}
+    <p class="sm:col-span-2 font-semibold text-sm">Add experience</p>
+    <input class="input" name="job_title" placeholder="Job title *" required maxlength="150">
+    <input class="input" name="company_name" placeholder="Company *" required maxlength="200">
+    <div><label class="text-xs text-slate-500" for="start_date">Start date</label><input class="input" id="start_date" name="start_date" type="date"></div>
+    <div><label class="text-xs text-slate-500" for="end_date">End date (leave blank if current)</label><input class="input" id="end_date" name="end_date" type="date"></div>
+    <textarea class="input sm:col-span-2" name="description" rows="2" placeholder="Description (optional)"></textarea>
+    <div class="sm:col-span-2"><button class="btn btn-outline" type="submit"><i class="fa-solid fa-plus"></i> Add Experience</button></div>
+  </form></section>
+{% endblock %}

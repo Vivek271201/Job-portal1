@@ -1,0 +1,24 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import status_badge, empty_state, company_logo %}
+{% block title %}Employer Dashboard{% endblock %}
+{% block dash %}
+<div class="flex items-center gap-4">{{ company_logo(company, "h-14 w-14") }}
+  <div class="flex-1"><h1 class="text-2xl font-extrabold text-slate-900">Welcome, {{ company.company_name }}</h1><p class="text-slate-500 text-sm">Here is what's happening with your hiring.</p></div>
+  <a href="/employer/jobs/create" class="btn btn-primary hidden sm:inline-flex"><i class="fa-solid fa-plus"></i> Post a Job</a></div>
+<div class="grid gap-4 mt-6 grid-cols-2 xl:grid-cols-4">
+  {% for n, label, icon, color in [(stats.jobs, 'Total Jobs', 'fa-briefcase', 'text-indigo-600 bg-indigo-50'), (stats.active, 'Active Jobs', 'fa-bolt', 'text-emerald-600 bg-emerald-50'), (stats.applications, 'Total Applications', 'fa-users', 'text-sky-600 bg-sky-50'), (stats.shortlisted, 'Shortlisted', 'fa-star', 'text-amber-600 bg-amber-50')] %}
+  <div class="card p-5"><div class="h-10 w-10 rounded-xl flex items-center justify-center {{ color }}"><i class="fa-solid {{ icon }}"></i></div><p class="text-3xl font-extrabold mt-3 text-slate-900">{{ n }}</p><p class="text-sm text-slate-500">{{ label }}</p></div>{% endfor %}
+</div>
+
+<section class="mt-8"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg">Recent Jobs</h2><a class="text-sm text-indigo-600 font-medium" href="/employer/jobs">Manage jobs</a></div>
+{% if recent_jobs %}<div class="card table-wrap"><table class="tbl"><thead><tr><th>Job</th><th>Applications</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+{% for j in recent_jobs %}<tr><td class="font-medium"><a class="hover:text-indigo-600" href="/jobs/{{ j.id }}">{{ j.title }}</a></td><td><a class="text-indigo-600 font-medium" href="/employer/applications?job_id={{ j.id }}">{{ j.applications|length }}</a></td><td>{{ status_badge(j.status) }}</td><td class="whitespace-nowrap">{{ j.created_at|date_fmt }}</td><td><a class="btn btn-outline btn-sm" href="/employer/jobs/{{ j.id }}/edit">Edit</a></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}{{ empty_state('fa-briefcase', 'No jobs posted yet', 'Post your first job to start receiving applications.', '/employer/jobs/create', 'Post a Job') }}{% endif %}</section>
+
+<section class="mt-8"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg">Recent Applications</h2><a class="text-sm text-indigo-600 font-medium" href="/employer/applications">View all</a></div>
+{% if recent_apps %}<div class="card table-wrap"><table class="tbl"><thead><tr><th>Applicant</th><th>Job</th><th>Date</th><th>Status</th><th>View</th></tr></thead><tbody>
+{% for a in recent_apps %}<tr><td class="font-medium">{{ a.seeker.full_name }}</td><td>{{ a.job.title }}</td><td class="whitespace-nowrap">{{ a.applied_at|date_fmt }}</td><td>{{ status_badge(a.status) }}</td><td><a class="btn btn-outline btn-sm" href="/seekers/{{ a.seeker.id }}">Profile</a></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}{{ empty_state('fa-users', 'No applications yet', 'Applications will appear here as candidates apply.') }}{% endif %}</section>
+{% endblock %}

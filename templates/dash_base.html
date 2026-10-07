@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+{% set path = request.url.path %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 lg:py-8 lg:grid lg:grid-cols-[15rem_1fr] lg:gap-8">
+  <aside class="mb-6 lg:mb-0">
+    <div class="card p-3 lg:sticky lg:top-24">
+      <nav class="flex lg:flex-col gap-1 overflow-x-auto" aria-label="Dashboard">
+      {% if user.role == 'seeker' %}
+        <a class="side-link {{ 'active' if path == '/seeker/dashboard' }}" href="/seeker/dashboard"><i class="fa-solid fa-gauge w-5"></i>Dashboard</a>
+        <a class="side-link {{ 'active' if path == '/seeker/profile' }}" href="/seeker/profile"><i class="fa-solid fa-user w-5"></i>My Profile</a>
+        <a class="side-link {{ 'active' if path == '/seeker/profile/edit' }}" href="/seeker/profile/edit"><i class="fa-solid fa-pen w-5"></i>Edit Profile</a>
+        <a class="side-link {{ 'active' if path == '/seeker/resume' }}" href="/seeker/resume"><i class="fa-solid fa-file-pdf w-5"></i>Resume</a>
+        <a class="side-link {{ 'active' if path == '/seeker/applications' }}" href="/seeker/applications"><i class="fa-solid fa-paper-plane w-5"></i>Applications</a>
+        <a class="side-link" href="/jobs"><i class="fa-solid fa-magnifying-glass w-5"></i>Find Jobs</a>
+      {% else %}
+        <a class="side-link {{ 'active' if path == '/employer/dashboard' }}" href="/employer/dashboard"><i class="fa-solid fa-gauge w-5"></i>Dashboard</a>
+        <a class="side-link {{ 'active' if path == '/employer/jobs' }}" href="/employer/jobs"><i class="fa-solid fa-briefcase w-5"></i>My Jobs</a>
+        <a class="side-link {{ 'active' if path == '/employer/jobs/create' }}" href="/employer/jobs/create"><i class="fa-solid fa-plus w-5"></i>Post a Job</a>
+        <a class="side-link {{ 'active' if path.startswith('/employer/applications') }}" href="/employer/applications"><i class="fa-solid fa-users w-5"></i>Applications</a>
+        <a class="side-link {{ 'active' if path == '/employer/profile/edit' }}" href="/employer/profile/edit"><i class="fa-solid fa-building w-5"></i>Edit Company</a>
+        <a class="side-link" href="/employer/profile"><i class="fa-solid fa-eye w-5"></i>View Profile</a>
+      {% endif %}
+      </nav>
+    </div>
+  </aside>
+  <section class="min-w-0">{% block dash %}{% endblock %}</section>
+</div>
+{% endblock %}

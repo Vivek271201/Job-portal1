@@ -1,0 +1,28 @@
+{% extends "dash_base.html" %}
+{% from "components/macros.html" import job_card, status_badge, empty_state, avatar %}
+{% block title %}Dashboard{% endblock %}
+{% block dash %}
+<div class="flex items-center gap-4">{{ avatar(seeker, "h-14 w-14") }}
+  <div><h1 class="text-2xl font-extrabold text-slate-900">Welcome, {{ seeker.full_name }}</h1><p class="text-slate-500 text-sm">{{ seeker.headline or 'Add a headline to introduce yourself to employers' }}</p></div></div>
+
+<div class="grid gap-4 mt-6 sm:grid-cols-2 xl:grid-cols-5">
+  <div class="card p-5 xl:col-span-2"><p class="text-sm text-slate-500">Profile Completion</p>
+    <p class="text-3xl font-extrabold text-slate-900 mt-1">{{ completion.percent }}%</p>
+    <div class="h-2.5 rounded-full bg-slate-100 mt-3 overflow-hidden" role="progressbar" aria-valuenow="{{ completion.percent }}" aria-valuemin="0" aria-valuemax="100"><div class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" style="width: {{ completion.percent }}%"></div></div>
+    {% if completion.suggestions %}<p class="text-xs text-slate-500 mt-3"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>{{ completion.suggestions[0] }} <a class="text-indigo-600 font-medium" href="/seeker/profile/edit">Update</a></p>{% endif %}</div>
+  {% for n, label, color in [(counts.total, 'Applications', 'text-indigo-600'), (counts.review, 'Under Review', 'text-amber-600'), (counts.shortlisted, 'Shortlisted', 'text-emerald-600'), (counts.selected, 'Selected', 'text-green-700')] %}
+  <div class="card p-5"><p class="text-sm text-slate-500">{{ label }}</p><p class="text-3xl font-extrabold mt-1 {{ color }}">{{ n }}</p></div>{% endfor %}
+</div>
+
+<section class="mt-8"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg">Recent Applications</h2><a class="text-sm text-indigo-600 font-medium" href="/seeker/applications">View all</a></div>
+  {% if recent %}<div class="card table-wrap"><table class="tbl"><thead><tr><th>Job</th><th>Company</th><th>Applied</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    {% for a in recent %}<tr><td class="font-medium">{{ a.job.title }}</td><td>{{ a.job.company.company_name }}</td><td class="whitespace-nowrap">{{ a.applied_at|date_fmt }}</td><td>{{ status_badge(a.status) }}</td><td><a class="btn btn-outline btn-sm" href="/jobs/{{ a.job.id }}">View</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}{{ empty_state('fa-paper-plane', 'No applications yet', 'Find a job you love and apply in a few clicks.', '/jobs', 'Browse Jobs') }}{% endif %}
+</section>
+
+<section class="mt-8"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg">Latest Jobs For You</h2><a class="text-sm text-indigo-600 font-medium" href="/jobs">Browse all</a></div>
+  {% if latest_jobs %}<div class="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">{% for job in latest_jobs %}{{ job_card(job) }}{% endfor %}</div>
+  {% else %}{{ empty_state('fa-briefcase', 'No jobs available', 'New jobs will appear here.') }}{% endif %}
+</section>
+{% endblock %}

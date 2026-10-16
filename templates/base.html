@@ -1,89 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="csrf-token" content="{{ csrf_token(request) }}">
-  <title>{% block title %}JobPortal{% endblock %} | JobPortal</title>
-  <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/static/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token(request) }}">
+    <title>{% block title %}JobPortal{% endblock %} | JobPortal</title>
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/tailwind.css">
 </head>
+
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
-{% set path = request.url.path %}
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 font-extrabold text-xl text-slate-900">
-      <span class="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center"><i class="fa-solid fa-briefcase text-sm"></i></span>Job<span class="text-indigo-600">Portal</span>
-    </a>
-    <nav class="hidden md:flex items-center gap-1" aria-label="Main">
-      {% if not user %}
-        <a href="/" class="nav-link {{ 'active' if path == '/' }}">Home</a>
-        <a href="/jobs" class="nav-link {{ 'active' if path.startswith('/jobs') }}">Find Jobs</a>
-        <a href="/companies" class="nav-link {{ 'active' if path.startswith('/companies') }}">Companies</a>
-        <a href="/about" class="nav-link {{ 'active' if path == '/about' }}">About</a>
-        <a href="/login" class="nav-link ml-2">Login</a>
-        <a href="/register" class="btn btn-primary btn-sm ml-1">Register</a>
-      {% elif user.role == 'seeker' %}
-        <a href="/jobs" class="nav-link {{ 'active' if path.startswith('/jobs') }}">Find Jobs</a>
-        <a href="/seeker/applications" class="nav-link {{ 'active' if path == '/seeker/applications' }}">Applications</a>
-        <a href="/seeker/profile" class="nav-link {{ 'active' if path.startswith('/seeker/profile') }}">Profile</a>
-        <a href="/seeker/dashboard" class="nav-link {{ 'active' if path == '/seeker/dashboard' }}">Dashboard</a>
-      {% else %}
-        <a href="/employer/dashboard" class="nav-link {{ 'active' if path == '/employer/dashboard' }}">Dashboard</a>
-        <a href="/employer/jobs" class="nav-link {{ 'active' if path.startswith('/employer/jobs') }}">Jobs</a>
-        <a href="/employer/applications" class="nav-link {{ 'active' if path.startswith('/employer/applications') }}">Applications</a>
-        <a href="/employer/profile" class="nav-link">Company Profile</a>
-      {% endif %}
-      {% if user %}
-      <form method="post" action="/logout" class="ml-2">{{ csrf_input(request) }}<button class="btn btn-outline btn-sm" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></form>
-      {% endif %}
-    </nav>
-    <button id="menu-btn" class="md:hidden h-10 w-10 rounded-lg border border-slate-200 text-slate-600" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
-  </div>
-  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1">
-    {% if not user %}
-      <a class="side-link" href="/">Home</a><a class="side-link" href="/jobs">Find Jobs</a><a class="side-link" href="/companies">Companies</a>
-      <a class="side-link" href="/about">About</a><a class="side-link" href="/login">Login</a><a class="side-link text-indigo-600" href="/register">Register</a>
-    {% elif user.role == 'seeker' %}
-      <a class="side-link" href="/jobs">Find Jobs</a><a class="side-link" href="/seeker/applications">Applications</a>
-      <a class="side-link" href="/seeker/profile">Profile</a><a class="side-link" href="/seeker/dashboard">Dashboard</a>
-    {% else %}
-      <a class="side-link" href="/employer/dashboard">Dashboard</a><a class="side-link" href="/employer/jobs">Jobs</a>
-      <a class="side-link" href="/employer/applications">Applications</a><a class="side-link" href="/employer/profile">Company Profile</a>
+    {% set path = request.url.path %}
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 font-extrabold text-xl text-slate-900">
+                <span class="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center"><i class="fa-solid fa-briefcase text-sm"></i></span>Job<span class="text-indigo-600">Portal</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-1" aria-label="Main">
+                {% if not user %}
+                <a href="/" class="nav-link {{ 'active' if path == '/' }}">Home</a>
+                <a href="/jobs" class="nav-link {{ 'active' if path.startswith('/jobs') }}">Find Jobs</a>
+                <a href="/companies" class="nav-link {{ 'active' if path.startswith('/companies') }}">Companies</a>
+                <a href="/about" class="nav-link {{ 'active' if path == '/about' }}">About</a>
+                <a href="/login" class="nav-link ml-2">Login</a>
+                <a href="/register" class="btn btn-primary btn-sm ml-1">Register</a> {% elif user.role == 'seeker' %}
+                <a href="/jobs" class="nav-link {{ 'active' if path.startswith('/jobs') }}">Find Jobs</a>
+                <a href="/seeker/applications" class="nav-link {{ 'active' if path == '/seeker/applications' }}">Applications</a>
+                <a href="/seeker/profile" class="nav-link {{ 'active' if path.startswith('/seeker/profile') }}">Profile</a>
+                <a href="/seeker/dashboard" class="nav-link {{ 'active' if path == '/seeker/dashboard' }}">Dashboard</a> {% else %}
+                <a href="/employer/dashboard" class="nav-link {{ 'active' if path == '/employer/dashboard' }}">Dashboard</a>
+                <a href="/employer/jobs" class="nav-link {{ 'active' if path.startswith('/employer/jobs') }}">Jobs</a>
+                <a href="/employer/applications" class="nav-link {{ 'active' if path.startswith('/employer/applications') }}">Applications</a>
+                <a href="/employer/profile" class="nav-link">Company Profile</a> {% endif %} {% if user %}
+                <form method="post" action="/logout" class="ml-2">{{ csrf_input(request) }}<button class="btn btn-outline btn-sm" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></form>
+                {% endif %}
+            </nav>
+            <button id="menu-btn" class="md:hidden h-10 w-10 rounded-lg border border-slate-200 text-slate-600" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1">
+            {% if not user %}
+            <a class="side-link" href="/">Home</a><a class="side-link" href="/jobs">Find Jobs</a><a class="side-link" href="/companies">Companies</a>
+            <a class="side-link" href="/about">About</a><a class="side-link" href="/login">Login</a><a class="side-link text-indigo-600" href="/register">Register</a> {% elif user.role == 'seeker' %}
+            <a class="side-link" href="/jobs">Find Jobs</a><a class="side-link" href="/seeker/applications">Applications</a>
+            <a class="side-link" href="/seeker/profile">Profile</a><a class="side-link" href="/seeker/dashboard">Dashboard</a> {% else %}
+            <a class="side-link" href="/employer/dashboard">Dashboard</a><a class="side-link" href="/employer/jobs">Jobs</a>
+            <a class="side-link" href="/employer/applications">Applications</a><a class="side-link" href="/employer/profile">Company Profile</a> {% endif %} {% if user %}
+            <form method="post" action="/logout">{{ csrf_input(request) }}<button class="side-link w-full text-red-600" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></form>{% endif %}
+        </div>
+    </header>
+
+    {% set cat_style = {'success': 'bg-emerald-50 border-emerald-200 text-emerald-800', 'error': 'bg-red-50 border-red-200 text-red-800', 'info': 'bg-blue-50 border-blue-200 text-blue-800'} %} {% set cat_icon = {'success': 'fa-circle-check', 'error': 'fa-circle-exclamation',
+    'info': 'fa-circle-info'} %} {% set messages = get_flashed(request) %} {% if messages %}
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 mt-4 space-y-2" aria-live="polite">
+        {% for cat, msg in messages %}
+        <div data-alert class="fade-in flex items-start gap-3 border rounded-xl px-4 py-3 text-sm {{ cat_style.get(cat, cat_style['info']) }}">
+            <i class="fa-solid {{ cat_icon.get(cat, 'fa-circle-info') }} mt-0.5"></i><span class="flex-1">{{ msg }}</span>
+            <button data-alert-close type="button" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
-    {% if user %}<form method="post" action="/logout">{{ csrf_input(request) }}<button class="side-link w-full text-red-600" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></form>{% endif %}
-  </div>
-</header>
 
-{% set cat_style = {'success': 'bg-emerald-50 border-emerald-200 text-emerald-800', 'error': 'bg-red-50 border-red-200 text-red-800', 'info': 'bg-blue-50 border-blue-200 text-blue-800'} %}
-{% set cat_icon = {'success': 'fa-circle-check', 'error': 'fa-circle-exclamation', 'info': 'fa-circle-info'} %}
-{% set messages = get_flashed(request) %}
-{% if messages %}
-<div class="max-w-7xl w-full mx-auto px-4 sm:px-6 mt-4 space-y-2" aria-live="polite">
-  {% for cat, msg in messages %}
-  <div data-alert class="fade-in flex items-start gap-3 border rounded-xl px-4 py-3 text-sm {{ cat_style.get(cat, cat_style['info']) }}">
-    <i class="fa-solid {{ cat_icon.get(cat, 'fa-circle-info') }} mt-0.5"></i><span class="flex-1">{{ msg }}</span>
-    <button data-alert-close type="button" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
+    <main class="flex-1">{% block content %}{% endblock %}</main>
 
-<main class="flex-1">{% block content %}{% endblock %}</main>
-
-<footer class="bg-slate-900 text-slate-400 mt-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid gap-8 sm:grid-cols-3 text-sm">
-    <div><p class="text-white font-bold text-lg">JobPortal</p><p class="mt-2">Connecting talented people with great companies.</p></div>
-    <div><p class="text-white font-semibold mb-2">Explore</p><ul class="space-y-1"><li><a href="/jobs" class="hover:text-white">Find Jobs</a></li><li><a href="/companies" class="hover:text-white">Companies</a></li><li><a href="/about" class="hover:text-white">About</a></li></ul></div>
-    <div><p class="text-white font-semibold mb-2">Get started</p><ul class="space-y-1"><li><a href="/register?role=seeker" class="hover:text-white">Create a seeker profile</a></li><li><a href="/register?role=employer" class="hover:text-white">Post a job</a></li></ul></div>
-  </div>
-  <div class="border-t border-slate-800 text-center text-xs py-4">&copy; {{ today().year }} JobPortal. Built with FastAPI, MySQL &amp; Tailwind CSS.</div>
-</footer>
-<script src="/static/js/main.js"></script>
-{% block scripts %}{% endblock %}
+    <footer class="bg-slate-900 text-slate-400 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid gap-8 sm:grid-cols-3 text-sm">
+            <div>
+                <p class="text-white font-bold text-lg">JobPortal</p>
+                <p class="mt-2">Connecting talented people with great companies.</p>
+            </div>
+            <div>
+                <p class="text-white font-semibold mb-2">Explore</p>
+                <ul class="space-y-1">
+                    <li><a href="/jobs" class="hover:text-white">Find Jobs</a></li>
+                    <li><a href="/companies" class="hover:text-white">Companies</a></li>
+                    <li><a href="/about" class="hover:text-white">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <p class="text-white font-semibold mb-2">Get started</p>
+                <ul class="space-y-1">
+                    <li><a href="/register?role=seeker" class="hover:text-white">Create a seeker profile</a></li>
+                    <li><a href="/register?role=employer" class="hover:text-white">Post a job</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 text-center text-xs py-4">&copy; {{ today().year }} JobPortal. Built with FastAPI, MySQL &amp; Tailwind CSS.</div>
+    </footer>
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
+
 </html>
